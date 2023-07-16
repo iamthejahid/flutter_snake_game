@@ -36,14 +36,43 @@ class GamePage extends StatefulWidget {
 }
 
 class _GamePageState extends State<GamePage> {
-  List snakePixels = [0, 1, 2];
+  List<int> snakePixels = [0, 1, 2];
   int foodPixel = 5;
   SnakeDirection snakeDirection = SnakeDirection.RIGHT;
 
   int rowSize = 10;
 
-  startGame() => Timer.periodic(const Duration(milliseconds: 200),
-      (timer) => setState(() => moveSnake()));
+  int score = 0;
+
+  startGame() => snakePixels.length <= 3
+      ? Timer.periodic(
+          const Duration(milliseconds: 200),
+          (timer) => setState(() {
+                moveSnake();
+                if (gameOver()) {
+                  timer.cancel();
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Game Over'),
+                      actions: [
+                        MaterialButton(
+                          onPressed: () => Navigator.of(context).pop(),
+                          child: const Text('Back'),
+                        ),
+                        MaterialButton(
+                          onPressed: () => {
+                            Navigator.of(context).pop(),
+                            reset(),
+                          },
+                          child: const Text('Reset'),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+              }))
+      : () {};
 
   eatFood() {
     while (snakePixels.contains(foodPixel)) {
@@ -99,10 +128,31 @@ class _GamePageState extends State<GamePage> {
     }
 
     if (snakePixels.last == foodPixel) {
+      setState(() {
+        score++;
+      });
       eatFood();
     } else {
       snakePixels.removeAt(0);
     }
+  }
+
+  bool gameOver() {
+    List<int> bodyPixels = snakePixels.sublist(0, snakePixels.length - 1);
+
+    if (bodyPixels.contains(snakePixels.last)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  reset() {
+    snakePixels = [0, 1, 2];
+    foodPixel = 5;
+    score = 0;
+    setState(() {});
+    Future.microtask(() => startGame());
   }
 
   @override
@@ -112,9 +162,14 @@ class _GamePageState extends State<GamePage> {
       body: Column(
         children: [
           Expanded(
-            child: Container(
-                // color: Colors.red,
+            child: Center(
+              child: Text(
+                "Score : $score",
+                style: const TextStyle(
+                  color: Colors.white,
                 ),
+              ),
+            ),
           ),
           Expanded(
               flex: 3,
@@ -157,8 +212,11 @@ class _GamePageState extends State<GamePage> {
             child: Center(
               child: MaterialButton(
                 color: Colors.pink,
-                child: const Text('play'),
                 onPressed: startGame,
+                child: const Text(
+                  'play',
+                  style: TextStyle(color: Colors.white),
+                ),
               ),
             ),
           )
