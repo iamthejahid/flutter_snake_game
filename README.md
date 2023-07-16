@@ -4,9 +4,11 @@
 This is a simple Flutter Snake Game app that allows you to play the classic Snake game. The game logic is implemented in Dart, and it revolves around controlling the snake, making it move, and handling food interactions.
 
 ## Preview
-![Screenshot 1](media/ss1.png)
-![Screenshot 2](media/ss2.png)
-![Screenshot 3](media/vid.gif)
+<p align="center">
+  <img src="media/ss1.png" alt="Screenshot 1" width="200" />
+  <img src="media/ss2.png" alt="Screenshot 2" width="200" />
+  <img src="media/vid.gif" alt="Screenshot 3" width="200" />
+</p>
 
 
 
